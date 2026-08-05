@@ -19,6 +19,87 @@ A **blind index** solves this by storing deterministic hashes for searchable tok
 
 ---
 
+## Architecture (ASCII)
+
+```text
+                  +----------------------+
+                  |   User Search Input  |
+                  |  (e.g. firstName=Dev)|
+                  +----------+-----------+
+                             |
+                             v
+                   +--------------------+
+                   | Query Normalization|
+                   | + Blind Hash Build |
+                   | sha1(field-token)  |
+                   +---------+----------+
+                             |
+                             v
++-------------------+    lookup hash     +----------------------+
+| tApplications.json| <----------------> | tBlindIndexes.json    |
+| (encrypted fields)|    by blind index  | (keyId, token, hash)  |
++---------+---------+                    +----------+-----------+
+          |                                           |
+          |                             matching keyIds|
+          +--------------------+----------------------+
+                               v
+                     +--------------------+
+                     | Candidate Records  |
+                     |   by applicationId |
+                     +---------+----------+
+                               |
+                               v
+                     +--------------------+
+                     | AES Decrypt Fields |
+                     | (matched records)  |
+                     +---------+----------+
+                               |
+                               v
+                     +--------------------+
+                     |   Search Results   |
+                     +--------------------+
+```
+
+---
+
+## Request lifecycle (step-by-step)
+
+### A) Write path (create application)
+
+1. App receives borrower payload (plaintext).
+2. If encryption mode is enabled:
+   - Encrypt NPI fields with AES before persistence.
+3. Save encrypted record into `tApplications.json`.
+4. For each searchable field (`firstName`, `lastName`, `city`):
+   - Generate substrings (`mountSentences`).
+   - Keep tokens with length >= 3.
+   - Hash each token as `sha1("${field}-${token}")`.
+   - Store `(keyId, hash)` in `tBlindIndexes.json` (demo also stores `sentence`).
+
+Result: data-at-rest is encrypted, and search metadata is precomputed.
+
+### B) Search path (find borrower)
+
+1. User provides query (currently prompt asks for `firstName`).
+2. In encryption mode:
+   - Transform query to blind hash using same rule:
+     `sha1("firstName-${input}")`.
+3. Scan blind index for matching hash.
+4. Collect matching `keyId`s (application IDs).
+5. Fetch only matching records from `tApplications.json`.
+6. Decrypt fields of matched records.
+7. Return decrypted results to user.
+
+Result: search works without full-table decryption of all rows.
+
+### C) Why this pattern works
+
+- Encryption protects raw sensitive values in primary storage.
+- Blind index enables deterministic lookup/search.
+- The app compares **hashes** during search, not plaintext.
+
+---
+
 ## How it works in this project
 
 The flow is implemented in `npiEncryption.js`.
