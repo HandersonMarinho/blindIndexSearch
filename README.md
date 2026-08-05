@@ -1,3 +1,4 @@
+## Blind Index Search
 
 Search encrypted data using a **blind index** strategy.
 
