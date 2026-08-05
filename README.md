@@ -156,6 +156,13 @@ At query time:
 
 This allows searching encrypted records without scanning/decrypting all data fields.
 
+**Plaint Text Search**
+<img width="951" height="372" alt="image" src="https://github.com/user-attachments/assets/8cf6be5c-a1d9-4a08-8d47-b0dd6d90f858" />
+
+**Encrypted Search**
+<img width="1108" height="375" alt="image" src="https://github.com/user-attachments/assets/3577c29c-ddcb-49dc-bfa3-d6c4833a25e7" />
+
+
 ---
 
 ## Run
