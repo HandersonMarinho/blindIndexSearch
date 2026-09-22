@@ -1,6 +1,3 @@
-// TODO: Real case scenario the encryption/hash strategy will be: 
-// Encryption: https://github.com/nelnet-velocity/nni-velocity-lib-crypto/blob/develop/src/CryptoEngine.ts#L13
-// Hash: https://github.com/nelnet-velocity/nni-velocity-lib-crypto/blob/develop/src/SCryptHashEngine.ts
 const AesEncryption = require("aes-encryption");
 const sha1 = require('sha1');
 
