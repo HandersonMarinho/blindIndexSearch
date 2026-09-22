@@ -264,21 +264,6 @@ async function init() {
     });
 }
 
-/*
-    To support additional GLBA (Gramm Leach Bliley Act) requirements we need to look into options for encrypting NPI 
-    (Nonpublic Personal Information) fields in our entities. Here is a list of fields that are considered NPI:
-
-    - Name
-    - Date or location of birth
-    - Address
-    - Income
-    - Social Security number
-    - Driver’s license number
-    - Credit Score
-    - Income history
-    - Other information on an application to obtain a loan, credit card, or other financial product or service
-    - Information obtained through Internet cookies and other web server information collecting devices
-*/
 (async() => {
     boostrap();
     await loadData();
